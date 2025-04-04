@@ -1,0 +1,14 @@
+// This is a TypeScript configuration file for a Playwright project.
+// It specifies the compiler options and includes the necessary files for testing.
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "types": ["node"]
+  },
+  "include": ["tests", "playwright.config.ts"]
+}
