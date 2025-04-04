@@ -1,29 +1,3 @@
-# This workflow will install Playwright browsers and run tests using Playwright on push and pull request events to the main branch. 
-
-# It uses the latest version of Node.js and runs on the latest Ubuntu environment.
-# The workflow checks out the repository, sets up Node.js, installs dependencies, installs Playwright browsers, and finally runs the tests.
-
-# The working directory for the tests is set to 'ecommerce-tests', which should be the directory where your Playwright tests are located. 
-
-# Make sure to adjust the working directory if your tests are located elsewhere.
-# You can also customize the Node.js version if needed. 
-
-# This workflow is triggered on push and pull request events to the main branch.
-# You can modify the branches as per your requirements.
-
-# The workflow uses the latest version of the actions/checkout and actions/setup-node actions.
-# The workflow is defined in YAML format and is compatible with GitHub Actions.
-
-# The workflow is named "Playwright Tests" and is defined in the .github/workflows directory of your repository.
-
-# The workflow is triggered on push and pull request events to the main branch.
-# The workflow consists of a single job named "test" that runs on the latest Ubuntu environment.
-# The job has several steps, including checking out the repository, setting up Node.js, installing dependencies, installing Playwright browsers, and running the tests. 
-
-# The working directory for the tests is set to 'ecommerce-tests', which should be the directory where your Playwright tests are located.
-# Make sure to adjust the working directory if your tests are located elsewhere.
-
-
 name: Playwright Tests
 
 on:
@@ -49,9 +23,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Verify working directory exists
-        run: if [ ! -d "ecommerce-tests" ]; then echo "Directory 'ecommerce-tests' does not exist."; exit 1; fi
-
       - name: Install dependencies
         run: npm ci
 
@@ -67,3 +38,4 @@ jobs:
         with:
           name: playwright-report
           path: ecommerce-tests/playwright-report
+
