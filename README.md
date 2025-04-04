@@ -32,7 +32,7 @@ It is designed to serve as a backend for UI testing automation using **Playwrigh
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Dag86/ecommerce-backend.git
+git clone https://github.com/Dag86/ecommerce-project.git
 cd ecommerce-backend
 
 ### 2. Create and activate a virtual environment
