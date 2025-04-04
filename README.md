@@ -91,3 +91,5 @@ uvicorn main:app --reload
 🤝 Contributing
 
 #Contributions welcome — this is a sandbox project to experiment and build out quality pipelines. PRs, issues, and forks are appreciated!
+
+echo "// trigger CI"
