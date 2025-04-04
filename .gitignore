@@ -1,4 +1,5 @@
 # Python environment files
+.venv/
 venv/
 __pycache__/
 
@@ -13,3 +14,17 @@ __pycache__/
 
 # macOS files
 .DS_Store
+# Node modules
+node_modules/
+
+# Playwright test results
+test-results/
+playwright-report/
+
+# OS / IDE stuff
+.DS_Store
+.vscode/
+
+# TypeScript build artifacts (if you compile manually)
+dist/
+*.tsbuildinfo
