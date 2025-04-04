@@ -2,6 +2,7 @@
 .venv/
 venv/
 __pycache__/
+*.py[cod]
 
 # Environment variables
 .env
@@ -14,6 +15,7 @@ __pycache__/
 
 # macOS files
 .DS_Store
+
 # Node modules
 node_modules/
 
@@ -21,10 +23,13 @@ node_modules/
 test-results/
 playwright-report/
 
-# OS / IDE stuff
-.DS_Store
-.vscode/
-
 # TypeScript build artifacts (if you compile manually)
 dist/
 *.tsbuildinfo
+
+# Logs
+*.log
+
+# Coverage reports
+coverage/
+*.lcov
