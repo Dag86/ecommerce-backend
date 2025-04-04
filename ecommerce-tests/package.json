@@ -9,5 +9,10 @@
   "keywords": [],
   "author": "Amir Choshov",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.51.1",
+    "@types/node": "^22.14.0",
+    "typescript": "^5.8.2"
+  }
 }
