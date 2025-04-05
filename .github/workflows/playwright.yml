@@ -42,15 +42,16 @@ jobs:
       - name: Wait for backend to be ready
         run: |
           for i in {1..10}; do
-            if curl -s http://localhost:8000/products; then
+            if curl -s http://127.0.0.1:8000/products; then
               echo  "✅ Backend is up!"
-              break
+              exit 0
             fi
-            echo "⏳ Waiting for backend..."
+            echo "⏳ Waiting for backend... ($i/10)"
             sleep 3
           done
+
           echo "❌ Backend did not start in time" >&2
-          cat ecommerce-backend/backend.log || true
+          cat backend.log || true
           exit 1
         working-directory: ecommerce-backend
 
