@@ -9,7 +9,7 @@ export default defineConfig({
   testDir: './tests',
   retries: process.env.CI ? 1 : 0,
   use: {
-    baseURL: 'http://localhost:8000',
+    baseURL: 'http://127.0.0.1:8000',
     headless: true,
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,

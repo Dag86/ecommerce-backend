@@ -47,8 +47,11 @@ jobs:
               break
             fi
             echo "⏳ Waiting for backend..."
-            sleep 2
+            sleep 3
           done
+          echo "❌ Backend did not start in time" >&2
+          cat ecommerce-backend/backend.log || true
+          exit 1
         working-directory: ecommerce-backend
 
       - name: Show backend logs (for debugging)
