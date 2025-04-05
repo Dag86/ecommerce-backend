@@ -1,5 +1,9 @@
-# This workflow runs Playwright tests on push and pull request events to the main branch.
-# It sets up the environment, installs dependencies, starts the FastAPI backend, and runs the tests.
+# This workflow runs Playwright tests on every push and pull request to the main branch.
+# It sets up the environment, installs dependencies, starts the FastAPI backend,
+
+# and runs the Playwright tests. It also uploads the test report as an artifact.
+# The workflow uses GitHub Actions to automate the testing process.
+
 
 name: Playwright Tests
 
@@ -12,6 +16,11 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    # 👇 Make secrets available to all steps
+    env:
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     defaults:
       run:
@@ -37,23 +46,19 @@ jobs:
 
       - name: Start FastAPI backend
         run: |
-           set -a
-           source .env
-           set +a 
-           nohup uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+          nohup uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
         working-directory: ecommerce-backend
 
       - name: Wait for backend to be ready
         run: |
           for i in {1..10}; do
             if curl -s http://127.0.0.1:8000/products; then
-              echo  "✅ Backend is up!"
+              echo "✅ Backend is up!"
               exit 0
             fi
             echo "⏳ Waiting for backend... ($i/10)"
             sleep 3
           done
-
           echo "❌ Backend did not start in time" >&2
           cat backend.log || true
           exit 1
@@ -62,7 +67,7 @@ jobs:
       - name: Show backend logs (for debugging)
         run: cat backend.log || true
         working-directory: ecommerce-backend
-        
+
       - name: Install Node.js dependencies
         run: npm ci
 
