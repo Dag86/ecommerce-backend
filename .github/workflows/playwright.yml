@@ -40,7 +40,7 @@ jobs:
         working-directory: ecommerce-backend
 
       - name: Wait for backend to be ready
-        run: 
+        run: |
           for i in {1..10}; do
             if curl -s http://localhost:8000/products; then
               echo  "✅ Backend is up!"
@@ -50,7 +50,7 @@ jobs:
             sleep 2
           done
         working-directory: ecommerce-backend
-        
+
       - name: Show backend logs (for debugging)
         run: cat backend.log || true
         working-directory: ecommerce-backend
