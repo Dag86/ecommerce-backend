@@ -36,7 +36,9 @@ jobs:
         working-directory: ecommerce-backend
 
       - name: Start FastAPI backend
-        run: nohup uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+        run: |
+           export DATABASE_URL="sqlite:///./test.db"
+           nohup uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
         working-directory: ecommerce-backend
 
       - name: Wait for backend to be ready
