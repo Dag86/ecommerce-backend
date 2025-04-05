@@ -15,9 +15,14 @@ from models import products, orders, metadata
 from database import database, engine
 from schemas import Product, OrderCreate
 
-# Load environment variables
-load_dotenv()
-stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+
+# Load environment variables from .env only if it exists (for local dev)
+if os.getenv("GITHUB_ACTIONS") != "true":
+    from dotenv import load_dotenv
+    load_dotenv()
+
+# Get Stripe API key from env var (required in CI/CD and local)
+stripe.api_key = os.environ["STRIPE_SECRET_KEY"]
 
 
 
