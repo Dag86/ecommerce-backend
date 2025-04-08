@@ -1,22 +1,26 @@
-import databases           # Provides easy asynchronous support for database operations
-import sqlalchemy          # SQLAlchemy is used for SQL abstraction and ORM functionality
-import os                  # For accessing environment variables
-from dotenv import load_dotenv  # To load environment variables from .env file
+# ecommerce-backend/database.py
+# This file contains the database connection and metadata setup for the FastAPI application.
+# It uses SQLAlchemy and Databases for async database operations.
 
-# Load environment variables from the '.env' file into the application's environment
+
+import databases
+import sqlalchemy
+import os
+from dotenv import load_dotenv
+
+# Load local env variables
 load_dotenv()
 
-# Get the database URL from the environment variables
+# Get DB URL from environment
 DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("DATABASE_URL environment variable is missing!")
 
-# Initialize asynchronous database connection
+# Async DB interface for queries
 database = databases.Database(DATABASE_URL)
 
-# Metadata instance to store table definitions and schemas
+# Metadata shared across models
 metadata = sqlalchemy.MetaData()
 
-# Create a SQLAlchemy engine instance to manage connections to the database
+# Sync engine for table creation and schema inspection
 engine = sqlalchemy.create_engine(DATABASE_URL)
-
-# Create all tables defined in metadata (currently none defined yet)
-metadata.create_all(engine)
