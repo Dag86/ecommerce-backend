@@ -1,33 +1,52 @@
-import { Page, Locator, FrameLocator } from '@playwright/test';
+import { Page,expect } from '@playwright/test';
 
 export class StripeCheckoutPage {
   private page: Page;
-  private outerFrame: FrameLocator;
-  private innerFrame: FrameLocator;
 
   constructor(page: Page) {
     this.page = page;
-    this.outerFrame = page.frameLocator('iframe[name^="privateStripeFrame"]');
-    this.innerFrame = this.outerFrame.frameLocator('iframe');
   }
 
+  // Fill in the email address field
+  async fillEmail(email: string) {
+    // Assumes the email input is directly on the page with placeholder "Email"
+    await this.page.locator('input[name="email"]').fill(email);
+
+  }
+
+    // Fill in the cardholder name field
+    async fillCardholderName(name: string) {
+      // Assumes the cardholder name field is labeled "Cardholder name" on the main page
+      await this.page.getByLabel('Cardholder name').fill(name);
+    }
+
+  // Fill card details by accessing nested Stripe iframes
   async fillCardDetails(card: string, exp: string, cvc: string, zip: string) {
-    await this.innerFrame.locator('input[name="cardnumber"]').fill(card);
-    await this.innerFrame.locator('input[name="exp-date"]').fill(exp);
-    await this.innerFrame.locator('input[name="cvc"]').fill(cvc);
-    await this.innerFrame.locator('input[name="postal"]').fill(zip);
+    await this.page.locator('input[placeholder="1234 1234 1234 1234"]').waitFor({ timeout: 15000 });
+
+    // Fill in card details using appropriate selectors
+    await this.page.locator('input[placeholder="1234 1234 1234 1234"]').fill(card);
+    await this.page.locator('input[placeholder="MM / YY"]').fill(exp);
+    await this.page.locator('input[placeholder="CVC"]').fill(cvc);
+    await this.page.locator('input[placeholder="ZIP"]').fill(zip);
+  }
+  
+  // Select a country from a combobox
+  async selectCountry(country: string) {
+    // Assumes the combobox is labeled "Country or region"
+    await this.page.getByRole('combobox', { name: 'Country or region' }).selectOption({ label: country });
+  }
+  async checkboxInputUncheck() {
+    await this.page.getByRole('checkbox', { name: 'Save my info for 1-click' }).uncheck();
+  }
+  async checkboxInputCheck() {
+    await this.page.getByRole('checkbox', { name: 'Save my info for 1-click' }).check();
+    
   }
 
-  async fillName(name: string) {
-    await this.page.getByLabel('Name on card').fill(name);
-  }
-
+  // Click the Pay button
   async clickPayButton() {
     const payButton = this.page.getByRole('button', { name: /pay/i });
     await payButton.click();
-  }
-
-  async waitForSuccessRedirect() {
-    await this.page.waitForURL('**/success');
   }
 }

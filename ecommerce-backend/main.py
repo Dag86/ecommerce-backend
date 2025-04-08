@@ -74,8 +74,8 @@ async def checkout(order: OrderCreate):
             "quantity": 1
         }],
         mode="payment",
-        success_url="https://your-site.com/success",
-        cancel_url="https://your-site.com/cancel"
+        success_url="http://127.0.0.1:8000/success",
+        cancel_url="http://127.0.0.1:8000/cancel"
     )
 
     query = orders.insert().values(
