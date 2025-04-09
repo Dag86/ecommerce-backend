@@ -30,7 +30,7 @@ test('Stripe Checkout Flow – complete payment and redirect', async ({ page, re
   await stripePage.fillCardholderName('Amir QA');
   await stripePage.fillCardDetails('4242 4242 4242 4242', '12 / 34', '123', '90210');
   await stripePage.selectCountry('United States');
-  await stripePage.checkboxInputUncheck();
+  await stripePage.setSaveInfoCheckbox(false); // Set checkbox to unchecked
 
   // 💳 Step 5: Submit payment and confirm redirect
   await stripePage.clickPayButton();
