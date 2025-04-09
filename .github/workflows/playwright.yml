@@ -1,10 +1,3 @@
-# This workflow runs Playwright tests on every push and pull request to the main branch.
-# It sets up the environment, installs dependencies, starts the FastAPI backend,
-
-# and runs the Playwright tests. It also uploads the test report as an artifact.
-# The workflow uses GitHub Actions to automate the testing process.
-
-
 name: Playwright Tests
 
 on:
@@ -17,7 +10,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    # 👇 Make secrets available to all steps
+    # Make secrets available to all steps
     env:
       STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -27,29 +20,56 @@ jobs:
         working-directory: ecommerce-tests
 
     steps:
-      - name: Checkout repository
+      # Checkout the repo code
+      - name: 📥 Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Set up Python
+      # Setup Python for FastAPI backend
+      - name: 🐍 Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install Python dependencies
+      # Cache pip dependencies for faster builds
+      - name: 💾 Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+
+      - name: 📦 Install Python dependencies
         run: pip install -r requirements.txt
         working-directory: ecommerce-backend
 
-      - name: Start FastAPI backend
+      # Setup Node.js for Playwright
+      - name: 🧰 Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      # Cache npm dependencies
+      - name: 💾 Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: 📦 Install Node.js dependencies
+        run: npm ci
+
+      - name: 🎭 Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      # Start backend in background
+      - name: 🚀 Start FastAPI backend
         run: |
           nohup uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
         working-directory: ecommerce-backend
 
-      - name: Wait for backend to be ready
+      # Wait for backend readiness
+      - name: ⏱️ Wait for backend to be ready
         run: |
           for i in {1..10}; do
             if curl -s http://127.0.0.1:8000/products; then
@@ -64,22 +84,27 @@ jobs:
           exit 1
         working-directory: ecommerce-backend
 
-      - name: Show backend logs (for debugging)
+      # Output backend logs (always helpful)
+      - name: 🪵 Show backend logs
         run: cat backend.log || true
         working-directory: ecommerce-backend
 
-      - name: Install Node.js dependencies
-        run: npm ci
-
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
-
-      - name: Run Playwright tests
+      # Run Playwright tests
+      - name: 🧪 Run Playwright tests
         run: npx playwright test --config=playwright.config.ts
 
-      - name: Upload Playwright HTML Report
+      # Upload test report as GitHub artifact
+      - name: 📊 Upload Playwright HTML report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: ecommerce-tests/playwright-report
+
+      # Upload backend logs if pipeline fails
+      - name: 🪵 Upload backend logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-log
+          path: ecommerce-backend/backend.log
