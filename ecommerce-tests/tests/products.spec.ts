@@ -1,16 +1,26 @@
-// This test file checks the functionality of the GET /products endpoint.
-// It verifies that the endpoint returns a 200 status code and contains seeded items in the response.
-// Import necessary modules from Playwright
+// ✅ Test: Validate GET /products returns correct seeded data
+
 import { test, expect } from '@playwright/test';
 
+// Constants – reuse seeded product names
+const seededProducts = ['Laptop', 'Smartphone'];
 
-test('GET /products returns seeded items', async ({ request }) => {
+test('GET /products returns seeded items with correct structure', async ({ request }) => {
   const response = await request.get('/products');
+  
+  // ✅ Validate response status
   expect(response.status()).toBe(200);
 
   const body = await response.json();
-  const productNames = body.map((item: any) => item.name);
 
-  expect(productNames).toContain('Laptop');
-  expect(productNames).toContain('Smartphone');
+  // ✅ Check that seeded products are present
+  const productNames = body.map((item: any) => item.name);
+  seededProducts.forEach(name => expect(productNames).toContain(name));
+
+  // ✅ Check that each product has valid structure
+  for (const item of body) {
+    expect(item).toHaveProperty('id');
+    expect(item).toHaveProperty('name');
+    expect(item).toHaveProperty('price');
+  }
 });
