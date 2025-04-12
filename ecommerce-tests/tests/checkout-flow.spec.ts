@@ -6,6 +6,7 @@
 
 import { test, expect } from '@playwright/test';
 import { StripeCheckoutPage } from '../pages/StripeCheckoutPage';
+import { testUser, testCards, address } from '../utils/testData';
 
 test('Stripe Checkout Flow – complete payment and redirect', async ({ page, request }) => {
   // 🔁 Step 1: Fetch product dynamically
@@ -26,10 +27,10 @@ test('Stripe Checkout Flow – complete payment and redirect', async ({ page, re
 
   // 📄 Step 4: Fill out Stripe form
   const stripePage = new StripeCheckoutPage(page);
-  await stripePage.fillEmail('test@example.com');
-  await stripePage.fillCardholderName('Amir QA');
-  await stripePage.fillCardDetails('4242 4242 4242 4242', '12 / 34', '123', '90210');
-  await stripePage.selectCountry('United States');
+  await stripePage.fillEmail(testUser.email);
+  await stripePage.fillCardholderName(testUser.name);
+  await stripePage.fillCardDetails(testCards.visa.number, testCards.visa.exp, testCards.visa.cvc, address.zip);
+  await stripePage.selectCountry(address.country);
   await stripePage.setSaveInfoCheckbox(false); // Set checkbox to unchecked
 
   // 💳 Step 5: Submit payment and confirm redirect

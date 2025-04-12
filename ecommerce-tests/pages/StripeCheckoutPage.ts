@@ -4,7 +4,8 @@
 // It includes methods for filling in the email address, cardholder name, card details, selecting a country, and clicking the Pay button.
 
 import { Page, expect } from '@playwright/test';
-
+import { testCards, testUser, address } from '../utils/testData';
+import test from 'node:test';
 export class StripeCheckoutPage {
   private page: Page;
 
@@ -14,21 +15,21 @@ export class StripeCheckoutPage {
 
   // Fill in the email address field
   async fillEmail(email: string) {
-    await this.page.locator('input[name="email"]').fill(email);
+    await this.page.locator('input[name="email"]').fill(testUser.email);
   }
 
   // Fill in the cardholder name field
   async fillCardholderName(name: string) {
-    await this.page.getByLabel('Cardholder name').fill(name);
+    await this.page.getByLabel('Cardholder name').fill(testUser.name);
   }
 
   // Fill card details by accessing nested Stripe iframes
   async fillCardDetails(card: string, exp: string, cvc: string, zip: string) {
     await this.page.locator('input[placeholder="1234 1234 1234 1234"]').waitFor({ timeout: 15000 });
-    await this.page.locator('input[placeholder="1234 1234 1234 1234"]').fill(card);
-    await this.page.locator('input[placeholder="MM / YY"]').fill(exp);
-    await this.page.locator('input[placeholder="CVC"]').fill(cvc);
-    await this.page.locator('input[placeholder="ZIP"]').fill(zip);
+    await this.page.locator('input[placeholder="1234 1234 1234 1234"]').fill(testCards.visa.number);
+    await this.page.locator('input[placeholder="MM / YY"]').fill(testCards.visa.exp);
+    await this.page.locator('input[placeholder="CVC"]').fill(testCards.visa.cvc);
+    await this.page.locator('input[placeholder="ZIP"]').fill(address.zip);
   }
 
   // Select a country from a combobox
