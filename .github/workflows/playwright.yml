@@ -101,6 +101,13 @@ jobs:
           name: playwright-report
           path: ecommerce-tests/playwright-report
 
+      # Upload test results (trace/video/screenshot) if tests fail
+      - name: 📦 Upload Playwright test artifacts (trace/video/screenshot)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+            name: playwright-artifacts
+            path: ecommerce-tests/test-results/
       # Upload backend logs if pipeline fails
       - name: 🪵 Upload backend logs on failure
         if: failure()

@@ -13,7 +13,13 @@ It is designed to serve as a backend for UI testing automation using **Playwrigh
 - SQLite database using SQLAlchemy
 - Environment variable support via `.env`
 - Modular and clean project structure
-- Prepped for full E2E test automation & CI/CD integration
+- Fully integrated with Playwright E2E automation
+- GitHub Actions CI/CD with:
+  - Headless browser testing
+  - Stripe sandbox session validation
+  - Screenshots, video, and trace upload on failure
+  - Backend service health checks
+  - HTML test reports as artifacts
 
 ---
 
@@ -23,7 +29,8 @@ It is designed to serve as a backend for UI testing automation using **Playwrigh
 - Stripe (sandbox)
 - SQLite + SQLAlchemy + Databases
 - Python-dotenv
-- Git & GitHub (for version control)
+- Playwright (TypeScript)
+- Git & GitHub Actions
 
 ---
 
@@ -34,62 +41,77 @@ It is designed to serve as a backend for UI testing automation using **Playwrigh
 ```bash
 git clone https://github.com/Dag86/ecommerce-project.git
 cd ecommerce-backend
+```
 
 ### 2. Create and activate a virtual environment
 
+```bash
 python -m venv venv
 source venv/bin/activate        # macOS/Linux
-venv\Scripts\activate           # Windows
+venv\Scripts\activate         # Windows
+```
 
 ### 3. Install dependencies
 
+```bash
 pip install -r requirements.txt
+```
 
-###4. Create a .env file
+### 4. Create a .env file
 
+```env
 # .env
 STRIPE_SECRET_KEY=sk_test_your_stripe_test_key
 DATABASE_URL=sqlite:///./test.db
+```
 
-# Replace sk_test_your_stripe_test_key with your Stripe Test Key.
+> Replace `sk_test_your_stripe_test_key` with your Stripe Test Key.
 
 ### 5. Run the application locally
 
+```bash
 uvicorn main:app --reload
+```
 
-# Visit http://localhost:8000/products in your browser.
+> Visit [http://localhost:8000/products](http://localhost:8000/products) in your browser.
 
-📚 API Endpoints
+---
 
-#Method |	Endpoint   |	 Description
+## 📚 API Endpoints
 
-#GET	  | /products  |  Get list of available products
-#POST   |	/checkout	 |  Start Stripe checkout session
+| Method | Endpoint     | Description                          |
+|--------|--------------|--------------------------------------|
+| GET    | `/products`  | Get list of available products       |
+| POST   | `/checkout`  | Start Stripe checkout session        |
 
-🧪 Upcoming Testing Features
+---
 
-#✅ UI Test Automation with Playwright (TypeScript)
+## 🧪 End-to-End Testing
 
-#✅ CI/CD using GitHub Actions
+- ✅ UI Test Automation with Playwright (TypeScript)
+- ✅ Stripe test cards and checkout flow
+- ✅ GitHub Actions CI integration
+- ✅ Test data abstraction with `testData.ts`
+- ✅ Trace, video, and HTML reports on failure
 
-#⏳ Simulated Stripe payments (end-to-end)
+---
 
-#⏳ Email confirmation integration via Mailtrap
+## 📌 Project Goals
 
-📌 Project Goals
+This project is part of a QA Engineer Portfolio to demonstrate:
 
-#This project is part of a QA Engineer Portfolio to demonstrate:
+- Backend API & database testing
+- Third-party integration testing (Stripe)
+- Full-stack automation (UI + API + CI)
+- Clean, testable backend architecture
+- CI/CD reporting and diagnostics
 
-#Backend API & database testing
+---
 
-#Third-party integration testing (Stripe, Email)
+## 🤝 Contributing
 
-#Full-stack automation (UI + API + CI)
+Contributions welcome — this is a sandbox project to experiment and build out quality pipelines. PRs, issues, and forks are appreciated!
 
-#Clean, testable backend architecture
+---
 
-🤝 Contributing
-
-#Contributions welcome — this is a sandbox project to experiment and build out quality pipelines. PRs, issues, and forks are appreciated!
-
-echo "// trigger CI"
+> echo "// trigger CI"
