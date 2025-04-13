@@ -1,28 +1,31 @@
-// This test checks the checkout functionality of the ecommerce application
-// by dynamically fetching a product ID from the database and using it to create a Stripe checkout session.
+// Description: This test checks the /checkout API endpoint for a valid Stripe session URL.
+// It verifies that the response contains a valid URL and that the product ID used is valid. The test uses Playwright for API testing and includes assertions to validate the response structure and content.
+// It also includes a helper function to fetch the first product ID from the API, ensuring that the test is reusable and maintainable.
 
 import { test, expect } from '@playwright/test';
+import { getFirstProductId } from '../helpers/apiHelpers';
 
 test('POST /checkout returns valid Stripe session URL for real product', async ({ request }) => {
-  // ✅ Dynamically fetch first product instead of hardcoding ID
-  const productsRes = await request.get('/products');
-  expect(productsRes.status()).toBe(200);
-  
-  const products = await productsRes.json();
-  expect(products.length).toBeGreaterThan(0); // ✅ Ensure seeded data is present
-
-  const productId = products[0].id;
-
-  // ✅ Send checkout request using fetched product ID
-  const response = await request.post('/checkout', {
-    data: { product_id: productId }
+  const productId = await test.step('Fetch first product ID', async () => {
+    return await getFirstProductId(request);
   });
 
-  expect(response.status()).toBe(200);
+  let checkoutUrl: string;
 
-  const body = await response.json();
-  expect(body).toHaveProperty('checkout_url');
-  expect(body.checkout_url).toMatch(/^https:\/\/checkout\.stripe\.com/);
+  await test.step('Post to /checkout with productId', async () => {
+    const response = await request.post('/checkout', {
+      data: { product_id: productId },
+    });
 
-  console.log('✅ Stripe Checkout URL:', body.checkout_url);
+    expect(response.status()).toBe(200);
+
+    const body = await response.json();
+    expect(body).toHaveProperty('checkout_url');
+    expect(body.checkout_url).toMatch(/^https:\/\/checkout\.stripe\.com/);
+    checkoutUrl = body.checkout_url;
+  });
+
+  await test.step('Log the Stripe Checkout URL', async () => {
+    console.log('✅ Stripe Checkout URL:', checkoutUrl);
+  });
 });

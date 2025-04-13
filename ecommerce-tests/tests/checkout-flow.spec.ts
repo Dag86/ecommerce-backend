@@ -7,34 +7,48 @@
 import { test, expect } from '@playwright/test';
 import { StripeCheckoutPage } from '../pages/StripeCheckoutPage';
 import { testUser, testCards, address } from '../utils/testData';
+test('Stripe Checkout Flow - complete payment and redirect', async ({ page, request }) => {
+  let productId: number;
+  let checkoutUrl: string;
 
-test('Stripe Checkout Flow – complete payment and redirect', async ({ page, request }) => {
-  // 🔁 Step 1: Fetch product dynamically
-  const products = await request.get('/products').then(res => res.json());
-  expect(products.length).toBeGreaterThan(0);
+  await test.step('Fetch products and select first product ID', async () => {
+    const res = await request.get('/products');
+    const products = await res.json();
+    expect(products.length).toBeGreaterThan(0);
+    productId = products[0].id;
+  });
 
-  const productId = products[0].id;
+  await test.step('Create Stripe checkout session', async () => {
+    const res = await request.post('/checkout', { data: { product_id: productId } });
+    const body = await res.json();
+    checkoutUrl = body.checkout_url;
+    console.log('Stripe Checkout URL:', checkoutUrl);
+  });
 
-  // 🚀 Step 2: Create Stripe checkout session
-  const response = await request.post('/checkout', { data: { product_id: productId } });
-  const body = await response.json();
-  const checkoutUrl = body.checkout_url;
-  console.log('Stripe Checkout URL:', checkoutUrl);
+  await test.step('Navigate to Stripe and validate URL', async () => {
+    await page.goto(checkoutUrl);
+    await expect(page).toHaveURL(/stripe\.com/);
+  });
 
-  // 🌐 Step 3: Navigate to Stripe and validate
-  await page.goto(checkoutUrl);
-  await expect(page).toHaveURL(/stripe\.com/);
-
-  // 📄 Step 4: Fill out Stripe form
   const stripePage = new StripeCheckoutPage(page);
-  await stripePage.fillEmail(testUser.email);
-  await stripePage.fillCardholderName(testUser.name);
-  await stripePage.fillCardDetails(testCards.visa.number, testCards.visa.exp, testCards.visa.cvc, address.zip);
-  await stripePage.selectCountry(address.country);
-  await stripePage.setSaveInfoCheckbox(false); // Set checkbox to unchecked
 
-  // 💳 Step 5: Submit payment and confirm redirect
-  await stripePage.clickPayButton();
-  await page.waitForURL('**/success', { timeout: 10000 });
-  expect(page.url()).toContain('/success');
+  await test.step('Fill out Stripe payment form', async () => {
+    await stripePage.fillEmail(testUser.email);
+    await stripePage.fillCardholderName(testUser.name);
+    await stripePage.fillCardDetails(
+      testCards.visa.number,
+      testCards.visa.exp,
+      testCards.visa.cvc,
+      address.zip
+    );
+    await stripePage.selectCountry(address.country);
+    await stripePage.setSaveInfoCheckbox(false);
+  });
+
+  await test.step('Submit payment and confirm redirect', async () => {
+    await stripePage.clickPayButton();
+    await page.waitForURL('**/success', { timeout: 10000 });
+    expect(page.url()).toContain('/success');
+  });
 });
+

@@ -2,6 +2,8 @@
 // This file contains test data used in the Playwright test suite for the ecommerce application.
 // It includes user information, valid card details, and address data. This data is used in various tests to simulate user interactions and validate functionality.
 
+export const seededProducts = ['Laptop', 'Smartphone'];
+
 export const testUser = {
   email: 'test@example.com',
   name: 'Amir QA',
